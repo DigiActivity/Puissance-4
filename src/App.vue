@@ -1,60 +1,92 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 // Notre grille fait 7 colonnes et 6 lignes
 const grille = ref([
   [0, 0, 0, 0, 0, 0],
-  [1, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0],
-  [1, 2, 1, 2, 1, 2],
-  [1, 0, 0, 0, 0, 0],
-  [2, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0],
 ]);
 
-let couleurActuelle = ref(1);
-let TextJoueur = ref(("Joueur 1 avec la couleur rouge joue"));
+const couleurActuelle = ref(1);
 
+const computedJoueur = computed(() => {
+  if (couleurActuelle.value === 1) {
+    return { class: "yellow", couleur: "Jaune" };
+  } else {
+    return { class: "red", couleur: "Rouge" };
+  }
+});
+
+function changeTour() {
+  // échanger la couleur actuelle
+  if (couleurActuelle.value === 1) {
+    couleurActuelle.value = 2;
+  } else {
+    couleurActuelle.value = 1;
+  }
+}
+
+function verifieVictoire(couleur, colonne, cellule) {
+  // couleur : un 1 ou un 2 (jaune ou rouge)
+
+  let compteur = 0;
+  // Horizontal : vérifier qu'on a au moins 4 pièces alignées
+
+  let x = colonne;
+  let y = cellule;
+
+  // on regarde à droite
+  while (compteur < 4 && x < 7 && y < 6 && grille.value[x][y] === couleur) {
+    x++;
+    compteur++;
+  }
+  if (compteur > 3) return true;
+
+  // on se replace et on regarde à gauche
+  x = colonne - 1;
+  while (compteur < 4 && x >= 0 && y >= 0 && grille.value[x][y] === couleur) {
+    x--;
+    compteur++;
+  }
+  if (compteur > 3) return true;
+
+  // Vertical
+
+  // Diagonale gauche
+
+  // Diagonale droite
+
+  return false;
+}
 
 function onColumnClick(numero_colonne) {
-  // parcourir la colonne 'numero_colonne'
-  // dès que je trouve une cellule vide, je place ma couleur
-  // si j'ai placé, le tour est validé et la couleur change
-  // ------------------------------------------------------------
-  // si je n'ai pas réussi, c'est que la colonne est pleine
-  // le tour n'est pas validé, c'est toujours à moi
+  // utile en lecture, inutilisable en écriture
+  const colonne = grille.value[numero_colonne];
 
-  // couleur 1 = rouge
-  // couleur 2 = jaune
-  
-  for ( let y = 0; y < grille.value[numero_colonne].length; y++) {
-    
-
-    if (grille.value[numero_colonne][y] === 0) {
-      
-      console.log(grille)
-      console.log(couleurActuelle.value)
-      grille.value[numero_colonne][y] = couleurActuelle.value;
-
-      couleurActuelle.value = couleurActuelle.value === 1 ? 2 : 1;
-      TextJoueur.value = couleurActuelle.value === 1 ? "Joueur 1 avec la couleur rouge joue" : "Joueur 2 avec la couleur jaune joue";
-
-      
-
-      // si condition valide ? vrai : false
-      
+  for (const [positionCellule, valeurCellule] of colonne.entries()) {
+    if (valeurCellule === 0) {
+      // alors je peux placer ma couleur à la position de la cellule actuelle
+      grille.value[numero_colonne][positionCellule] = couleurActuelle.value;
+      const isVictoire = verifieVictoire(
+        couleurActuelle.value,
+        numero_colonne,
+        positionCellule
+      );
+      console.log(isVictoire);
+      changeTour();
       break;
     }
   }
-
 }
-// grille.value[numero_colonne][y] = couleurActuelle.value;
-// // couleurActuelle.value = couleurActuelle.value === 1 ? 2 : 1;
 </script>
 
 <template>
   <h1>Puissance 4</h1>
   <main>
-
     <div class="grille">
       <div
         class="colonne"
@@ -70,10 +102,9 @@ function onColumnClick(numero_colonne) {
         ></div>
       </div>
     </div>
-    <h2
-    :class="couleurActuelle === 1 ? 'texteRouge' : 'TexteJaune'"
-    
-    >{{ TextJoueur }}</h2>
+    <h2 :class="computedJoueur.class">
+      C'est au tour du {{ computedJoueur.couleur }}
+    </h2>
   </main>
 </template>
 
@@ -120,10 +151,16 @@ h1 {
 .cellule.jaune {
   background-color: rgb(234, 196, 27);
 }
-.TexteJaune {
-  color: rgba(209, 171, 0, 0.874);
+
+h2 {
+  width: fit-content;
+  margin: 30px auto;
 }
-.texteRouge {
-  color: rgb(124, 32, 11);
+
+h2.yellow {
+  background-color: gold;
+}
+h2.red {
+  background-color: red;
 }
 </style>
