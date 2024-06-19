@@ -40,7 +40,14 @@ function verifieVictoire(couleur, colonne, cellule) {
   let y = cellule;
 
   // on regarde à droite
-  while (compteur < 4 && x < 7 && y < 6 && grille.value[x][y] === couleur) {
+
+  /**
+   * Récapitulons les étapes de vérification :
+   * - Est ce que j'ai déjà 4 pions alignés ?
+   * - Est ce que je suis sorti du tableau ?
+   * - Est ce que sur la case actuelle il y a ma couleur ?
+   */
+  while (compteur < 4 && x < 7 && grille.value[x][y] === couleur) {
     x++;
     compteur++;
   }
@@ -48,7 +55,7 @@ function verifieVictoire(couleur, colonne, cellule) {
 
   // on se replace et on regarde à gauche
   x = colonne - 1;
-  while (compteur < 4 && x >= 0 && y >= 0 && grille.value[x][y] === couleur) {
+  while (compteur < 4 && x >= 0 && grille.value[x][y] === couleur) {
     x--;
     compteur++;
   }
@@ -56,9 +63,72 @@ function verifieVictoire(couleur, colonne, cellule) {
 
   // Vertical
 
-  // Diagonale gauche
+  compteur = 0;
+
+  x = colonne;
+  y = cellule;
+
+  while (compteur < 4 && y < 6 && grille.value[x][y] === couleur) {
+    y++;
+    compteur++;
+  }
+  if (compteur > 3) return true;
+
+  y = cellule - 1;
+
+  while (compteur < 4 && y >= 0 && grille.value[x][y] === couleur) {
+    y--;
+    compteur++;
+  }
+  if (compteur > 3) return true;
 
   // Diagonale droite
+
+  compteur = 0;
+
+  x = colonne;
+  y = cellule;
+
+  while (compteur < 4 && y < 6 && x < 7 && grille.value[x][y] === couleur) {
+    x++;
+    y++;
+    compteur++;
+  }
+  if (compteur > 3) return true;
+
+  x = colonne - 1;
+  y = cellule - 1;
+
+  while (compteur < 4 && y >= 0 && x >= 0 && grille.value[x][y] === couleur) {
+    x--;
+    y--;
+    compteur++;
+  }
+  if (compteur > 3) return true;
+
+  // Diagonale gauche
+
+  compteur = 0;
+
+  x = colonne;
+  y = cellule;
+
+  while (compteur < 4 && y < 6 && x >= 0 && grille.value[x][y] === couleur) {
+    x--;
+    y++;
+    compteur++;
+  }
+  if (compteur > 3) return true;
+
+  x = colonne + 1;
+  y = cellule - 1;
+
+  while (compteur < 4 && y >= 0 && x < 7 && grille.value[x][y] === couleur) {
+    x++;
+    y--;
+    compteur++;
+  }
+  if (compteur > 3) return true;
 
   return false;
 }
