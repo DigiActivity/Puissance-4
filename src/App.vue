@@ -146,7 +146,9 @@ function onColumnClick(numero_colonne) {
         numero_colonne,
         positionCellule
       );
-      console.log(isVictoire);
+      if (isVictoire) {
+        alert("Victoire de : " + computedJoueur.value.couleur);
+      }
       changeTour();
       break;
     }
